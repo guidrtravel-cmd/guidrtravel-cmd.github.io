@@ -366,6 +366,22 @@ async function loadCount(){
 }
 loadCount();
 
+/* Does the domain accept mail at all? Google's DNS-over-HTTPS, free and keyless.
+   Catches gmial.com and made-up domains, which is where the real losses are: a typo is
+   a person who wanted the app and will never get the launch email.
+   It cannot catch junk@gmail.com — Gmail deliberately will not say whether a mailbox
+   exists, so only a confirmation email can. Fails OPEN: a DNS hiccup must never block
+   a real signup to catch a fake one. */
+async function domainAccepts(email){
+  const domain = email.split('@')[1];
+  try{
+    const r = await fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=MX');
+    if(!r.ok) return true;
+    const j = await r.json();
+    return j.Status === 0 && Array.isArray(j.Answer) && j.Answer.length > 0;
+  }catch(_){ return true; }
+}
+
 $('form').addEventListener('submit', async function(ev){
   ev.preventDefault();
   const email = $('email').value.trim().toLowerCase();
@@ -374,7 +390,14 @@ $('form').addEventListener('submit', async function(ev){
     msg.className = 'msg err'; msg.textContent = 'That email does not look right.';
     return;
   }
-  btn.disabled = true; msg.className = 'msg'; msg.textContent = 'Adding you…';
+  btn.disabled = true; msg.className = 'msg'; msg.textContent = 'Checking…';
+  if(!await domainAccepts(email)){
+    msg.className = 'msg err';
+    msg.textContent = "That address can't receive mail. Check the spelling.";
+    btn.disabled = false;
+    return;
+  }
+  msg.textContent = 'Adding you…';
   try{
     const r = await fetch(SUPA + '/rest/v1/waitlist', {
       method: 'POST',
