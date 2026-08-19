@@ -32,9 +32,6 @@
   --brand-deep:#E64A00;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-/* An author rule like form{display:flex} beats the browser's own [hidden] rule, so
-   without this the code form is visible the whole time. */
-[hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%}
 body{
   background:var(--bg); color:var(--text);
@@ -171,14 +168,6 @@ button:disabled{opacity:.55;cursor:default;transform:none}
 .msg{margin-top:15px;font-size:14.5px;font-weight:500;min-height:21px}
 .msg.ok{color:var(--brand-lite)}
 .msg.err{color:#FF7A6B}
-#code{text-align:center;letter-spacing:.42em;font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
-#code::placeholder{letter-spacing:.02em;font-size:15.5px;font-weight:400}
-.linky{
-  margin-top:2px;background:none;border:0;box-shadow:none;padding:6px;
-  font-size:13.5px;font-weight:500;color:var(--dim);text-decoration:underline;
-  text-underline-offset:3px;cursor:pointer;
-}
-.linky:hover{color:var(--muted);transform:none;box-shadow:none}
 
 /* ---------- counter ---------- */
 .counter{
@@ -267,14 +256,7 @@ footer{width:100%;text-align:center;padding:46px 0 max(32px,env(safe-area-inset-
       <input id="email" type="email" required placeholder="you@email.com" autocomplete="email" spellcheck="false" aria-label="Email address">
       <button id="btn" type="submit">Pre-register</button>
     </form>
-
-    <form id="codeForm" novalidate hidden>
-      <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6"
-             placeholder="6-digit code" spellcheck="false" aria-label="The code we emailed you">
-      <button id="codeBtn" type="submit">Confirm</button>
-    </form>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
-    <button id="again" class="linky" hidden type="button">Use a different email</button>
 
     <div class="counter" id="counter">
       <span class="n" id="count">0</span>
@@ -397,28 +379,6 @@ async function domainAccepts(email){
   }catch(_){ return true; }
 }
 
-$('form')/* ---- two steps: prove the address, then join ----
-   Step 1 asks Supabase Auth to email a 6-digit code. Step 2 checks it, which is the
-   only thing that can prove a mailbox exists — Gmail will never tell you otherwise.
-   No redirect and no link to click: the code is typed on this page.
-   The row is written with the session the code returns, so the insert happens as a
-   verified user rather than as anon. */
-let pending = '';
-
-function step(which){
-  $('form').hidden     = which !== 'email';
-  $('codeForm').hidden = which !== 'code';
-  $('again').hidden    = which !== 'code';
-  if(which === 'code') setTimeout(function(){ $('code').focus(); }, 60);
-}
-
-$('again').addEventListener('click', function(){
-  pending = ''; $('code').value = '';
-  $('msg').className = 'msg'; $('msg').textContent = '';
-  step('email');
-  $('email').focus();
-});
-
 $('form').addEventListener('submit', async function(ev){
   ev.preventDefault();
   const email = $('email').value.trim().toLowerCase();
@@ -434,74 +394,23 @@ $('form').addEventListener('submit', async function(ev){
     btn.disabled = false;
     return;
   }
-  msg.textContent = 'Sending you a code…';
+  msg.textContent = 'Adding you…';
   try{
-    const r = await fetch(SUPA + '/auth/v1/otp', {
-      method: 'POST', headers: H,
-      body: JSON.stringify({ email: email, create_user: true })
+    const r = await fetch(SUPA + '/rest/v1/waitlist', {
+      method: 'POST',
+      headers: Object.assign({ 'Prefer':'return=minimal' }, H),
+      body: JSON.stringify({ email: email, source: location.search.slice(1) || 'direct' })
     });
     if(r.ok){
-      pending = email;
       msg.className = 'msg ok';
-      msg.textContent = 'Code sent to ' + email + '. Check your inbox.';
-      step('code');
-    } else if(r.status === 429){
-      // Supabase's built-in mailer allows a handful an hour. Say so rather than
-      // letting it read as a broken form.
-      msg.className = 'msg err';
-      msg.textContent = 'Too many just now. Try again in a few minutes.';
-    } else {
-      throw new Error(r.status + ' ' + await r.text());
-    }
-  }catch(err){
-    msg.className = 'msg err';
-    msg.textContent = "Couldn't send the code. Try again in a moment.";
-    console.error(err);
-  }
-  btn.disabled = false;
-});
-
-$('codeForm').addEventListener('submit', async function(ev){
-  ev.preventDefault();
-  const token = $('code').value.replace(/\D/g,'');
-  const msg = $('msg'), btn = $('codeBtn');
-  if(token.length < 6){
-    msg.className = 'msg err'; msg.textContent = 'That code is six digits.';
-    return;
-  }
-  btn.disabled = true; msg.className = 'msg'; msg.textContent = 'Checking the code…';
-  try{
-    const v = await fetch(SUPA + '/auth/v1/verify', {
-      method: 'POST', headers: H,
-      body: JSON.stringify({ email: pending, token: token, type: 'email' })
-    });
-    if(!v.ok){
-      msg.className = 'msg err';
-      msg.textContent = v.status === 403 || v.status === 401
-        ? 'That code is wrong or expired.'
-        : 'That did not work. Try again.';
-      btn.disabled = false;
-      return;
-    }
-    const session = await v.json();
-    const auth = {
-      'apikey': KEY,
-      'Authorization': 'Bearer ' + (session.access_token || KEY),
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
-    };
-    const r = await fetch(SUPA + '/rest/v1/waitlist', {
-      method: 'POST', headers: auth,
-      body: JSON.stringify({ email: pending, source: location.search.slice(1) || 'direct' })
-    });
-    if(r.ok || r.status === 409){
+      msg.textContent = "You're in. We'll email you the day it lands.";
+      $('form').reset();
+      roll(shown + 1);                      // ticks over in front of them
+    } else if(r.status === 409){
+      // the unique constraint firing: already registered, which is not a failure
       msg.className = 'msg ok';
-      msg.textContent = r.status === 409
-        ? "You're already registered."
-        : "You're in. We'll email you the day it lands.";
-      $('form').reset(); $('code').value = ''; pending = '';
-      step('email');
-      if(r.ok) roll(shown + 1);
+      msg.textContent = "You're already registered.";
+      $('form').reset();
     } else {
       throw new Error(r.status + ' ' + await r.text());
     }
