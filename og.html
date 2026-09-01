@@ -22,33 +22,41 @@ body{
   font-family:Inter,system-ui,sans-serif;
   color:#FAFAFA;
   position:relative;
-  display:flex;flex-direction:column;justify-content:space-between;
-  padding:62px 72px;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  text-align:center;
+  padding:52px 64px 56px;
 }
+/* Centred, not left-aligned. Left-aligned left the right 40% of the card dead black,
+   which at the size X actually renders a card reads as empty rather than as designed.
+   The site's hero is centred; this is the same shape. */
+
 /* The site's glow: concentrated pools rather than a wash, or it goes brown */
 .glow{position:absolute;inset:0;background:
-  radial-gradient(760px 460px at 84% 108%, rgba(255,122,26,.32), transparent 64%),
-  radial-gradient(560px 380px at 2% -10%, rgba(255,158,72,.15), transparent 66%);}
-.grain{position:absolute;inset:0;opacity:.28;
+  radial-gradient(680px 420px at 50% -6%, rgba(255,122,26,.30), transparent 66%),
+  radial-gradient(520px 360px at 6% 106%, rgba(255,90,0,.16), transparent 66%),
+  radial-gradient(520px 360px at 94% 108%, rgba(255,158,72,.16), transparent 66%);}
+.grain{position:absolute;inset:0;opacity:.24;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
   mix-blend-mode:soft-light}
 .row{position:relative;display:flex;align-items:center;gap:15px}
-.row img{width:132px;height:auto;display:block}
-.tag{font-size:15px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#7A7A85}
+.row img{width:126px;height:auto;display:block}
+.tag{font-size:15px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#7A7A85}
 /* Breaks are hard-coded: an unfurler crops, it never reflows, so the two lines are the
-   design rather than whatever the width happens to give. Full serif, like the site's h1. */
+   design rather than whatever the width happens to give. Full serif, like the site's h1.
+   Big enough that it still reads at the ~500px X renders a card at. */
 h1{
   position:relative;font-family:'Instrument Serif',Georgia,serif;font-weight:400;
-  font-size:82px;line-height:1.04;letter-spacing:-.025em;
+  font-size:96px;line-height:1.0;letter-spacing:-.028em;
 }
 h1 em{font-style:italic;
   background:linear-gradient(100deg,#FFB472,#FF6A0A);
   -webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{position:relative;margin-top:20px;font-size:22px;line-height:1.45;color:#A3A3AD;max-width:720px}
-.foot{position:relative;display:flex;align-items:center;gap:16px;font-size:19px;color:#7A7A85}
-.pill{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:999px;
-  background:linear-gradient(140deg,#FF8526,#E24A00);color:#fff;font-weight:600;font-size:19px}
-.dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.9}
+.sub{position:relative;margin-top:26px;font-size:27px;line-height:1.4;color:#A3A3AD}
+.foot{position:relative;display:flex;align-items:center;gap:18px;font-size:20px;color:#7A7A85}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;
+  background:linear-gradient(140deg,#FF8526,#E24A00);color:#fff;font-weight:600;font-size:21px;
+  box-shadow:0 6px 26px rgba(255,106,10,.34)}
+.dot{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.9}
 </style>
 </head>
 <body>
