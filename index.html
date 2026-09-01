@@ -138,50 +138,6 @@ h1 em{
 .gbtn:active{transform:translateY(0)}
 .gbtn:disabled{opacity:.6;cursor:default;transform:none}
 .gbtn svg{width:20px;height:20px;flex:none;display:block;fill:#fff}
-.gbtn[hidden],.or[hidden]{display:none}
-
-.or{
-  display:flex;align-items:center;gap:14px;margin:16px 4px;
-  font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
-}
-.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
-
-form{
-  display:flex;gap:6px;padding:6px;border-radius:999px;
-  background:var(--card);border:1px solid var(--line);transition:.2s;
-}
-form:focus-within{border-color:var(--line-2);box-shadow:0 0 0 4px rgba(255,106,10,.12)}
-input{
-  flex:1;min-width:0;font:inherit;font-size:15.5px;color:var(--text);
-  background:none;border:0;outline:none;padding:12px 8px 12px 18px;caret-color:var(--brand);
-}
-input::placeholder{color:var(--faint)}
-/* Chrome paints its own white background and dark text over an autofilled field.
-   Nothing but an inset shadow that size overrides it, and the absurd transition
-   delay stops it flashing white for a frame first. */
-input:-webkit-autofill,input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,input:autofill{
-  -webkit-text-fill-color:var(--text);
-  -webkit-box-shadow:0 0 0 1000px var(--card) inset;
-  box-shadow:0 0 0 1000px var(--card) inset;
-  caret-color:var(--brand);
-  transition:background-color 600000s 0s,color 600000s 0s;
-}
-button.go{
-  font:inherit;font-weight:600;font-size:15px;letter-spacing:-.008em;
-  padding:12px 24px;border:0;border-radius:999px;cursor:pointer;white-space:nowrap;color:#fff;
-  background:linear-gradient(140deg,#FF8526,var(--brand-deep));
-  box-shadow:0 4px 16px rgba(255,106,10,.3),inset 0 1px 0 rgba(255,255,255,.26);
-  transition:transform .16s,box-shadow .16s,opacity .16s;
-}
-button.go:hover{transform:translateY(-1px);box-shadow:0 7px 22px rgba(255,106,10,.42),inset 0 1px 0 rgba(255,255,255,.26)}
-button.go:active{transform:translateY(0)}
-button.go:disabled{opacity:.55;cursor:default;transform:none}
-@media(max-width:430px){
-  form{flex-direction:column;border-radius:20px;padding:7px}
-  input{padding:13px 16px}
-  button.go{width:100%;padding:14px}
-}
 
 .msg{margin-top:15px;font-size:14.5px;font-weight:500;min-height:21px}
 .msg.ok{color:var(--brand-lite)}
@@ -296,13 +252,6 @@ footer{width:100%;text-align:center;padding:clamp(56px,9vh,88px) 0 max(30px,env(
              "Register with Google" is not. -->
         <span>Sign up with Google</span>
       </button>
-
-      <div class="or" id="orline" hidden><span>or</span></div>
-
-      <form id="form" novalidate>
-        <input id="email" type="email" required placeholder="you@email.com" autocomplete="email" inputmode="email" spellcheck="false" aria-label="Email address">
-        <button class="go" id="btn" type="submit">Sign up</button>
-      </form>
     </div>
 
     <p class="msg up d4" id="msg" role="status" aria-live="polite"></p>
@@ -382,7 +331,9 @@ const KEY  = 'sb_publishable_6vY2Gb75k7u35MhOPjrmjA_aDRUgsoL';
    This is the ONLY way to register now that the email field is gone,
    so the site cannot go live until it is filled in.
    =================================================================== */
-const GOOGLE_CLIENT_ID = '';
+const GOOGLE_CLIENT_ID =
+  new URLSearchParams(location.search).get('gid') ||   // ?gid=… to try one without a deploy
+  '';
 
 /* Hide the counter until it reaches this. 0 = always show it (good for testing).
    Raise it to ~15 before you post the link, so nobody's first impression is "2". */
@@ -448,13 +399,11 @@ async function join(email, door){
     });
     if(r.ok){
       say('ok', "You're in. We'll email you the day it lands.");
-      $('form').reset();
       roll(shown + 1);                      // ticks over in front of them
       return true;
     }
     if(r.status === 409){                   // the unique constraint: already registered
       say('ok', "You're already registered.");
-      $('form').reset();
       return true;
     }
     throw new Error(r.status + ' ' + await r.text());
@@ -498,15 +447,12 @@ async function afterGoogle(resp){
 
 function startGoogle(){
   const btn = $('gbtn');
-  $('orline').hidden = false;
-  /* Google refuses any origin that is not registered against a Client ID from their
-     console, so without one this button cannot work no matter what is written here.
-     It stays on the page because it is the sign-up everybody expects, and the email
-     field underneath is what keeps the page working until the ID lands. */
+  /* Google refuses any origin that is not registered against a Client ID issued by
+     their console, so without one this button cannot work whatever is written here.
+     It is the only door, so it is never hidden. */
   if(!GOOGLE_CLIENT_ID){
     btn.addEventListener('click', function(){
-      say('err', 'Google sign-up is being switched on. Use your email for now.');
-      $('email').focus();
+      say('err', "Sign-up opens in a moment. Check back shortly.");
     });
     return;
   }
@@ -525,23 +471,6 @@ function startGoogle(){
   });
 }
 window.addEventListener('load', startGoogle);
-
-/* ---- the typed address ----
-   Any real-looking address, not Gmail only as before: Google hands back work addresses
-   on custom domains, so a rule that accepts those and rejects the same one typed was
-   inconsistent. It still cannot catch junk@gmail.com, because Gmail will not say
-   whether a mailbox exists, so only a confirmation email could and that costs 20 to
-   40% of signups. Launch-day bounces are the free version of that. */
-$('form').addEventListener('submit', async function(ev){
-  ev.preventDefault();
-  const email = $('email').value.trim().toLowerCase();
-  if(!/^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(email)){
-    return say('err', "That doesn't look like an email address.");
-  }
-  $('btn').disabled = true;
-  await join(email, 'form');
-  $('btn').disabled = false;
-});
 </script>
 </body>
 </html>
