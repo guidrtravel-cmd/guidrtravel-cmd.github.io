@@ -2,43 +2,52 @@
 <!-- The link preview card. Not linked from the site: it exists to be screenshotted.
      Re-render after editing:
        chrome --headless=new --screenshot=og.png --window-size=1200,630 \
-              --force-device-scale-factor=2 --hide-scrollbars og.html
+              --force-device-scale-factor=2 --hide-scrollbars --virtual-time-budget=6000 og.html
      1200x630 is the size X and every other unfurler crops to. Pointing og:image at a
-     square logo is what made the preview a giant zoomed letter. -->
+     square logo is what made the preview a giant zoomed letter.
+
+     AFTER RE-RENDERING, BUMP ?v= ON og:image AND twitter:image IN index.html.
+     X caches a card against the image URL and will not refetch the same one, which is
+     why one of the first two posts kept showing a giant orange G. Posts already up keep
+     whatever card they were given; the bump is what fixes the next one. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:1200px;height:630px;overflow:hidden}
 body{
-  background:#0B0A09;
+  background:#09090B;                 /* the site's neutral black, not the old warm one */
   font-family:Inter,system-ui,sans-serif;
-  color:#F5EFE9;
+  color:#FAFAFA;
   position:relative;
   display:flex;flex-direction:column;justify-content:space-between;
-  padding:64px 72px;
+  padding:62px 72px;
 }
-/* the same warm falloff the app uses behind the assistant, done with one radial */
+/* The site's glow: concentrated pools rather than a wash, or it goes brown */
 .glow{position:absolute;inset:0;background:
-  radial-gradient(900px 520px at 88% 112%, rgba(255,105,10,.34), transparent 62%),
-  radial-gradient(620px 420px at 4% -12%, rgba(255,138,50,.16), transparent 66%);}
-.grain{position:absolute;inset:0;opacity:.5;
+  radial-gradient(760px 460px at 84% 108%, rgba(255,122,26,.32), transparent 64%),
+  radial-gradient(560px 380px at 2% -10%, rgba(255,158,72,.15), transparent 66%);}
+.grain{position:absolute;inset:0;opacity:.28;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
-  mix-blend-mode:overlay}
-.row{position:relative;display:flex;align-items:center;gap:14px}
+  mix-blend-mode:soft-light}
+.row{position:relative;display:flex;align-items:center;gap:15px}
 .row img{width:132px;height:auto;display:block}
-.tag{font-size:15px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#8C8177}
-/* breaks are hard-coded: an unfurler crops, it never reflows, so the three lines are
-   the design rather than whatever the width happens to give */
-h1{position:relative;font-size:60px;line-height:1.14;font-weight:600;letter-spacing:-.025em}
-h1 em{display:block;font-size:64px;margin-top:6px}
-h1 em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;
-  background:linear-gradient(100deg,#FF8A32,#E64A00);-webkit-background-clip:text;background-clip:text;color:transparent}
-.foot{position:relative;display:flex;align-items:center;gap:16px;font-size:19px;color:#8C8177}
-.pill{display:inline-flex;align-items:center;gap:9px;padding:11px 20px;border-radius:999px;
-  background:linear-gradient(100deg,#FF8A32,#E64A00);color:#fff;font-weight:600;font-size:19px}
+.tag{font-size:15px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#7A7A85}
+/* Breaks are hard-coded: an unfurler crops, it never reflows, so the two lines are the
+   design rather than whatever the width happens to give. Full serif, like the site's h1. */
+h1{
+  position:relative;font-family:'Instrument Serif',Georgia,serif;font-weight:400;
+  font-size:82px;line-height:1.04;letter-spacing:-.025em;
+}
+h1 em{font-style:italic;
+  background:linear-gradient(100deg,#FFB472,#FF6A0A);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{position:relative;margin-top:20px;font-size:22px;line-height:1.45;color:#A3A3AD;max-width:720px}
+.foot{position:relative;display:flex;align-items:center;gap:16px;font-size:19px;color:#7A7A85}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:999px;
+  background:linear-gradient(140deg,#FF8526,#E24A00);color:#fff;font-weight:600;font-size:19px}
 .dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.9}
 </style>
 </head>
@@ -50,7 +59,10 @@ h1 em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight
   <span class="tag">iOS &amp; Android</span>
 </div>
 
-<h1>Everyone gets sent to<br>the same ten places.<em>We're building the opposite.</em></h1>
+<div>
+  <h1>Your whole trip,<br>planned <em>and checked.</em></h1>
+  <p class="sub">Every AI will write you an itinerary. Almost none of them check it.</p>
+</div>
 
 <div class="foot">
   <span class="pill"><span class="dot"></span>Pre-register</span>
