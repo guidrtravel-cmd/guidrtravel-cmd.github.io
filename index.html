@@ -170,29 +170,16 @@ h1 em{
 }
 .store svg{height:clamp(25px,3.6vw,31px);width:auto;flex:none;display:block;fill:var(--text)}
 
-/* ---------- what it is ---------- */
-.what{width:100%;max-width:940px;padding:clamp(24px,5vh,56px) 0 clamp(64px,10vh,104px);text-align:center}
+/* ---------- what it is ----------
+   One line, and nothing under it. The three cards and the paragraph that were here
+   explained the mechanics, which is the thing this page has never done. */
+.what{width:100%;max-width:940px;padding:clamp(32px,7vh,72px) 0 clamp(64px,10vh,104px);text-align:center}
 .what h2{
   font-family:'Instrument Serif',Georgia,serif;font-weight:400;
   font-size:clamp(30px,4.6vw,46px);line-height:1.1;letter-spacing:-.018em;
   text-wrap:balance;max-width:660px;margin:0 auto;
 }
 .what h2 em{font-style:italic;color:var(--brand-lite)}
-.what .sub{margin:18px auto 0;max-width:470px;color:var(--body);font-size:16px;text-wrap:pretty}
-.cards{margin-top:44px;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));text-align:left}
-.card{
-  padding:24px 22px 26px;border-radius:20px;
-  background:var(--card);border:1px solid var(--line);
-  transition:transform .22s,border-color .22s,background .22s;
-}
-.card:hover{transform:translateY(-3px);border-color:var(--line-2);background:var(--card-2)}
-.card .ic{
-  width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(150deg,rgba(255,133,38,.24),rgba(255,106,10,.10));
-}
-.card .ic svg{width:19px;height:19px;fill:none;stroke:var(--brand-lite);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.card b{display:block;margin-top:15px;font-size:16px;font-weight:600;letter-spacing:-.012em}
-.card p{margin-top:7px;font-size:14.5px;line-height:1.58;color:var(--body);text-wrap:pretty}
 
 /* ---------- who ---------- */
 .about{width:100%;max-width:520px;padding:0 0 clamp(20px,4vh,40px);text-align:center}
@@ -293,25 +280,6 @@ footer{width:100%;text-align:center;padding:clamp(56px,9vh,88px) 0 max(30px,env(
 
   <section class="what rise">
     <h2>Every AI will write you an itinerary. Almost none of them <em>check it.</em></h2>
-    <p class="sub">Roughly one AI trip plan in four sends you somewhere that has closed down. Guidr is the one that says so, before you go.</p>
-
-    <div class="cards">
-      <div class="card">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M17.7 6.3l-2.1 2.1M8.4 15.6l-2.1 2.1"/></svg></span>
-        <b>Ask for a trip</b>
-        <p>Say where you're going and how long you have. You get the days written out, with times, stops and what each one costs.</p>
-      </div>
-      <div class="card">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M20.5 11.1V12a8.5 8.5 0 1 1-5-7.8"/><path d="M9 11.5l3 3L21 5.5"/></svg></span>
-        <b>Then it gets checked</b>
-        <p>Opening hours, prices, the distance between stops and whether the day's clock actually fits. Looked up, not remembered by a model.</p>
-      </div>
-      <div class="card">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M16 20v-1.8a3.2 3.2 0 0 0-3.2-3.2H6.2A3.2 3.2 0 0 0 3 18.2V20"/><circle cx="9.5" cy="7.5" r="3.3"/><path d="M21 20v-1.8a3.2 3.2 0 0 0-2.4-3.1M15.5 4.4a3.2 3.2 0 0 1 0 6.2"/></svg></span>
-        <b>Scored by people you follow</b>
-        <p>Out of ten, by the people whose taste you actually chose, and not by ten thousand strangers who wanted a discount.</p>
-      </div>
-    </div>
   </section>
 
   <section class="about rise">
@@ -342,7 +310,7 @@ footer{width:100%;text-align:center;padding:clamp(56px,9vh,88px) 0 max(30px,env(
     </div>
   </section>
 
-  <footer>Guidr, built in Morocco</footer>
+  <footer>Guidr</footer>
 </div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
