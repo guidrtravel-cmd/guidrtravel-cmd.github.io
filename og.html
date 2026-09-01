@@ -1,0 +1,60 @@
+<!doctype html>
+<!-- The link preview card. Not linked from the site: it exists to be screenshotted.
+     Re-render after editing:
+       chrome --headless=new --screenshot=og.png --window-size=1200,630 \
+              --force-device-scale-factor=2 --hide-scrollbars og.html
+     1200x630 is the size X and every other unfurler crops to. Pointing og:image at a
+     square logo is what made the preview a giant zoomed letter. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1200px;height:630px;overflow:hidden}
+body{
+  background:#0B0A09;
+  font-family:Inter,system-ui,sans-serif;
+  color:#F5EFE9;
+  position:relative;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:64px 72px;
+}
+/* the same warm falloff the app uses behind the assistant, done with one radial */
+.glow{position:absolute;inset:0;background:
+  radial-gradient(900px 520px at 88% 112%, rgba(255,105,10,.34), transparent 62%),
+  radial-gradient(620px 420px at 4% -12%, rgba(255,138,50,.16), transparent 66%);}
+.grain{position:absolute;inset:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay}
+.row{position:relative;display:flex;align-items:center;gap:14px}
+.row img{width:132px;height:auto;display:block}
+.tag{font-size:15px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#8C8177}
+/* breaks are hard-coded: an unfurler crops, it never reflows, so the three lines are
+   the design rather than whatever the width happens to give */
+h1{position:relative;font-size:60px;line-height:1.14;font-weight:600;letter-spacing:-.025em}
+h1 em{display:block;font-size:64px;margin-top:6px}
+h1 em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;
+  background:linear-gradient(100deg,#FF8A32,#E64A00);-webkit-background-clip:text;background-clip:text;color:transparent}
+.foot{position:relative;display:flex;align-items:center;gap:16px;font-size:19px;color:#8C8177}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:11px 20px;border-radius:999px;
+  background:linear-gradient(100deg,#FF8A32,#E64A00);color:#fff;font-weight:600;font-size:19px}
+.dot{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.9}
+</style>
+</head>
+<body>
+<div class="glow"></div><div class="grain"></div>
+
+<div class="row">
+  <img src="guidr-wordmark.png" alt="Guidr">
+  <span class="tag">iOS &amp; Android</span>
+</div>
+
+<h1>Everyone gets sent to<br>the same ten places.<em>We're building the opposite.</em></h1>
+
+<div class="foot">
+  <span class="pill"><span class="dot"></span>Pre-register</span>
+  <span>guidrtravel-cmd.github.io</span>
+</div>
+</body>
+</html>
