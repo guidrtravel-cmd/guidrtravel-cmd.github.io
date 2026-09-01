@@ -498,16 +498,18 @@ async function afterGoogle(resp){
 
 function startGoogle(){
   const btn = $('gbtn');
-  /* No Client ID means Google cannot work at all, so the button is not drawn and the
-     email field below carries the whole page on its own. Paste the ID and the button
-     and its "or" rule appear above the field with no other change. A button that can
-     only apologise is worse than no button. */
+  $('orline').hidden = false;
+  /* Google refuses any origin that is not registered against a Client ID from their
+     console, so without one this button cannot work no matter what is written here.
+     It stays on the page because it is the sign-up everybody expects, and the email
+     field underneath is what keeps the page working until the ID lands. */
   if(!GOOGLE_CLIENT_ID){
-    btn.hidden = true;
-    if(local) console.info('No GOOGLE_CLIENT_ID: Google button hidden. SETUP.md step 2.');
+    btn.addEventListener('click', function(){
+      say('err', 'Google sign-up is being switched on. Use your email for now.');
+      $('email').focus();
+    });
     return;
   }
-  $('orline').hidden = false;
   if(!(window.google && google.accounts && google.accounts.oauth2)){
     return void setTimeout(startGoogle, 300);   // the GSI script is async
   }
