@@ -53,10 +53,18 @@ h1 em{font-style:italic;
   -webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{position:relative;margin-top:26px;font-size:27px;line-height:1.4;color:#A3A3AD}
 .foot{position:relative;display:flex;align-items:center;gap:18px;font-size:20px;color:#7A7A85}
-.pill{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;
-  background:linear-gradient(140deg,#FF8526,#E24A00);color:#fff;font-weight:600;font-size:21px;
-  box-shadow:0 6px 26px rgba(255,106,10,.34)}
-.dot{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.9}
+.foot{flex-direction:column;gap:16px}
+/* A screenshot cannot be pressed, so the card has to point at the thing you would press.
+   Three chevrons a side, fading towards the pill, aimed inwards. */
+.cta{display:flex;align-items:center;gap:24px}
+.arrows{display:flex;font-size:76px;line-height:1;color:#FF8526}
+.arrows span:nth-child(1){opacity:.28}
+.arrows span:nth-child(2){opacity:.6}
+.pill{display:inline-flex;align-items:center;gap:13px;padding:20px 44px;border-radius:999px;
+  background:linear-gradient(140deg,#FF8526,#E24A00);color:#fff;font-weight:700;font-size:36px;
+  letter-spacing:-.01em;transform:rotate(-2.5deg);
+  box-shadow:0 12px 44px rgba(255,106,10,.5)}
+
 </style>
 </head>
 <body>
@@ -73,7 +81,11 @@ h1 em{font-style:italic;
 </div>
 
 <div class="foot">
-  <span class="pill"><span class="dot"></span>Pre-register</span>
+  <div class="cta">
+    <span class="arrows"><span>&#10095;</span><span>&#10095;</span><span>&#10095;</span></span>
+    <span class="pill">Click me</span>
+    <span class="arrows"><span>&#10094;</span><span>&#10094;</span><span>&#10094;</span></span>
+  </div>
   <span>guidrtravel-cmd.github.io</span>
 </div>
 </body>
